@@ -1,6 +1,8 @@
 package server
 
 import (
+	"fmt"
+	"io"
 	"log"
 	"net"
 )
@@ -10,6 +12,7 @@ type Server interface {
 }
 
 type tcpServer struct {
+	writer io.Writer
 	C chan bool
 }
 
@@ -30,7 +33,15 @@ func (s *tcpServer) Run(addr string) {
 		}
 
 		go func(c net.Conn) {
-			log.Printf("Received connection from %s", c.RemoteAddr())
+			defer c.Close()
+			buff := make([]byte, 512)
+			_, err := conn.Read(buff)
+			if err != nil {
+				fmt.Printf("read error %s\n", err.Error())
+				return
+			}
+			n, err := fmt.Fprintf(s.writer, "%s", string(buff))
+			fmt.Println("write", n, err)
 		}(conn)
 	}
 }
