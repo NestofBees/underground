@@ -1,17 +1,16 @@
 package server
 
 import (
-	"bytes"
 	"errors"
 	"net"
-	"reflect"
 	"testing"
+
+	"github.com/NestofBees/underground/storage"
 )
 
 func TestServer(t *testing.T) {
-	buff := make([]byte, 512)
-	buffer := bytes.NewBuffer(buff)
-	server := tcpServer{writer: buffer, C: make(chan bool)}
+	storage := &storage.InMemoryStorage{}
+	server := tcpServer{writer: storage, C: make(chan bool)}
 
 	go server.Run(":8080")
 
@@ -47,7 +46,7 @@ func TestServer(t *testing.T) {
 		n, err := conn.Write(data)
 		assertErrorEqual(t, nil, err)	
 		assertIntEqual(t, len(data), n)
-		asserStringEqual(t, "Hello, World!", buffer.String())
+		asserStringSliceEqual(t, []string{"Hello, World!"}, storage.GetData(conn.LocalAddr().String()))
 	})
 }
 
@@ -65,17 +64,16 @@ func assertIntEqual(t testing.TB, want, got int) {
 	}
 }
 
-func asserStringEqual(t *testing.T, want, got string) {
+func asserStringSliceEqual(t *testing.T, want, got []string) {
 	t.Helper()
-	if reflect.DeepEqual(want, got) {
-		t.Fatalf("got %s, expected %s", got, want)
+	if len(want) != len(got) {
+		t.Fatalf("got %v, expected %v", got, want)
+	}
+
+	for i := 0; i < len(want); i++ {
+		if want[i] != got[i] {
+			t.Fatalf("got %v, expected %v", got, want)
+		}
 	}
 }
-	
-	
-	
-	
-	
-	
-	
 	
