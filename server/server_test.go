@@ -48,6 +48,8 @@ func TestServer(t *testing.T) {
 		n, err := conn.Write(data)
 		assertErrorEqual(t, nil, err)
 		assertIntEqual(t, len(data), n)
+		// wait data save to storage
+		time.Sleep(10 * time.Millisecond)
 		asserStringSliceEqual(t, []string{string(data)}, storage.GetData(conn.LocalAddr().String()))
 	})
 }

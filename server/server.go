@@ -45,5 +45,5 @@ func (s *tcpServer) receiveMessage(conn net.Conn) {
 		fmt.Printf("read error %s\n", err.Error())
 		return
 	}
-	fmt.Fprintf(s.storage, "%s", string(buff[:n]))
+	_, _ = fmt.Fprintf(s.storage, "%s", string(buff[:n]))
 }
