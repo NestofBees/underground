@@ -18,7 +18,7 @@ type tcpServer struct {
 }
 
 func (s *tcpServer) Run(addr string) {
-	l, err := net.Listen("tcp", addr)
+	l, err := net.Listen("tcp6", addr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,17 +33,17 @@ func (s *tcpServer) Run(addr string) {
 			continue
 		}
 
-		go handle(conn)
+		go s.receiveMessage(conn)
 	}
 }
 
-func handle(conn net.Conn) {
+func (s *tcpServer) receiveMessage(conn net.Conn) {
 	defer conn.Close()
 	buff := make([]byte, 512)
-	_, err := conn.Read(buff)
+	n, err := conn.Read(buff)
 	if err != nil {
 		fmt.Printf("read error %s\n", err.Error())
 		return
 	}
-	fmt.Fprintf(conn, "%s", string(buff))
+	fmt.Fprintf(s.storage, "%s", string(buff[:n]))
 }

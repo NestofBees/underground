@@ -2,8 +2,10 @@ package server
 
 import (
 	"errors"
+	"fmt"
 	"net"
 	"testing"
+	"time"
 
 	"github.com/NestofBees/underground/storage"
 )
@@ -19,34 +21,34 @@ func TestServer(t *testing.T) {
 	}
 
 	t.Run("Test connection", func(t *testing.T) {
-		conn, err := net.Dial("tcp", ":8080")
+		conn, err := net.Dial("tcp6", ":8080")
 		assertErrorEqual(t, nil, err)
 		defer conn.Close()
 	})
 
 	t.Run("Test send message", func(t *testing.T) {
-		conn, err := net.Dial("tcp", ":8080")
+		conn, err := net.Dial("tcp6", ":8080")
 		assertErrorEqual(t, nil, err)
 		defer conn.Close()
 
-		data := []byte("Hello world")
+		data := []byte(fmt.Sprintf("%d:-%s:-%s", time.Now().Unix(), conn.LocalAddr().String(), "Hello world"))
 		n, err := conn.Write(data)
 		assertErrorEqual(t, nil, err)
 		assertIntEqual(t, len(data), n)
 	})
 
 	t.Run("Test save message", func(t *testing.T) {
-		conn, err := net.Dial("tcp", ":8080")
+		conn, err := net.Dial("tcp6", ":8080")
 		if err != nil {
 			t.Fatalf("got %s, expecte err to be nil", err.Error())
 		}
 		defer conn.Close()
 
-		data := []byte("Hello world")
+		data := []byte(fmt.Sprintf("%d:-%s:-%s", time.Now().Unix(), conn.LocalAddr().String(), "Hello world"))
 		n, err := conn.Write(data)
 		assertErrorEqual(t, nil, err)
 		assertIntEqual(t, len(data), n)
-		asserStringSliceEqual(t, []string{"Hello, World!"}, storage.GetData(conn.LocalAddr().String()))
+		asserStringSliceEqual(t, []string{string(data)}, storage.GetData(conn.LocalAddr().String()))
 	})
 }
 
@@ -67,12 +69,14 @@ func assertIntEqual(t testing.TB, want, got int) {
 func asserStringSliceEqual(t *testing.T, want, got []string) {
 	t.Helper()
 	if len(want) != len(got) {
-		t.Fatalf("got %v, expected %v", got, want)
+		t.Fatalf("got %v, expected %v, length not same", got, want)
 	}
 
 	for i := 0; i < len(want); i++ {
 		if want[i] != got[i] {
-			t.Fatalf("got %v, expected %v", got, want)
+			for k := 0; k < len(want[i]); k++ {
+				t.Logf("equal: %v", want[i][k] == got[i][k])
+			}
 		}
 	}
 }
