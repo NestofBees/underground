@@ -10,7 +10,7 @@ import (
 
 func TestServer(t *testing.T) {
 	storage := &storage.InMemoryStorage{}
-	server := tcpServer{writer: storage, C: make(chan bool)}
+	server := tcpServer{storage: storage, C: make(chan bool)}
 
 	go server.Run(":8080")
 

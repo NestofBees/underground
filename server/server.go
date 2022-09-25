@@ -2,9 +2,10 @@ package server
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"net"
+
+	"github.com/NestofBees/underground/storage"
 )
 
 type Server interface {
@@ -12,7 +13,7 @@ type Server interface {
 }
 
 type tcpServer struct {
-	writer io.Writer
+	storage storage.Storage
 	C      chan bool
 }
 
