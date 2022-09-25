@@ -13,7 +13,7 @@ type Server interface {
 
 type tcpServer struct {
 	writer io.Writer
-	C chan bool
+	C      chan bool
 }
 
 func (s *tcpServer) Run(addr string) {
@@ -32,16 +32,17 @@ func (s *tcpServer) Run(addr string) {
 			continue
 		}
 
-		go func(c net.Conn) {
-			defer c.Close()
-			buff := make([]byte, 512)
-			_, err := conn.Read(buff)
-			if err != nil {
-				fmt.Printf("read error %s\n", err.Error())
-				return
-			}
-			n, err := fmt.Fprintf(s.writer, "%s", string(buff))
-			fmt.Println("write", n, err)
-		}(conn)
+		go handle(conn)
 	}
+}
+
+func handle(conn net.Conn) {
+	defer conn.Close()
+	buff := make([]byte, 512)
+	_, err := conn.Read(buff)
+	if err != nil {
+		fmt.Printf("read error %s\n", err.Error())
+		return
+	}
+	fmt.Fprintf(conn, "%s", string(buff))
 }

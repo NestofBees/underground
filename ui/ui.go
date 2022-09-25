@@ -1,6 +1,6 @@
 package ui
 
 type UI interface {
-	Input()	
+	Input()
 	Receiver()
 }

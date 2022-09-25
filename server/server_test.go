@@ -44,7 +44,7 @@ func TestServer(t *testing.T) {
 
 		data := []byte("Hello world")
 		n, err := conn.Write(data)
-		assertErrorEqual(t, nil, err)	
+		assertErrorEqual(t, nil, err)
 		assertIntEqual(t, len(data), n)
 		asserStringSliceEqual(t, []string{"Hello, World!"}, storage.GetData(conn.LocalAddr().String()))
 	})
@@ -76,4 +76,3 @@ func asserStringSliceEqual(t *testing.T, want, got []string) {
 		}
 	}
 }
-	
