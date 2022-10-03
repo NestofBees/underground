@@ -1,4 +1,4 @@
-package server
+package underground
 
 import (
 	"errors"
@@ -6,12 +6,10 @@ import (
 	"net"
 	"testing"
 	"time"
-
-	"github.com/NestofBees/underground/storage"
 )
 
 func TestServer(t *testing.T) {
-	storage := &storage.InMemoryStorage{}
+	storage := &InMemoryStorage{}
 	server := tcpServer{storage: storage, C: make(chan bool)}
 
 	go server.Run(":8080")

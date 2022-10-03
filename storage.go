@@ -1,4 +1,4 @@
-package storage
+package underground
 
 // Storage is a storage interface
 type Storage interface {

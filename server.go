@@ -1,11 +1,9 @@
-package server
+package underground
 
 import (
 	"fmt"
 	"log"
 	"net"
-
-	"github.com/NestofBees/underground/storage"
 )
 
 type Server interface {
@@ -13,8 +11,8 @@ type Server interface {
 }
 
 type tcpServer struct {
-	storage storage.Storage
-	C      chan bool
+	storage Storage
+	C       chan bool
 }
 
 func (s *tcpServer) Run(addr string) {
