@@ -1,6 +1,6 @@
-package ui
+package underground
 
 type UI interface {
-	Input()	
+	Input()
 	Receiver()
 }
